@@ -1,0 +1,27 @@
+{
+  "name": "obsidium-users-api",
+  "version": "1.0.0",
+  "description": "Users API for Obsidium API",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:rodolfopeixoto/obsidium-users-api.git"
+  },
+  "author": "Rodolfo Peixoto",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "firebase": "^7.3.0",
+    "firebase-admin": "^8.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
