@@ -2,32 +2,27 @@ const firebase = require('./../config/firebaseConfig');
 module.exports = {
   async call(email, password, passwordConfirmation, name, response){
     this.checkPasswordConfirmation(password, passwordConfirmation, response);
-    const userId = this.signInNewUser(email, password, response);
-    const userStatus = this.createUser(userId, email, name, response);
-    return userStatus
+    this.signInNewUser(email, password, name, response);
   },
-  async signInNewUser(email, password, response){
+  async signInNewUser(email, password, name, response){
     const auth = firebase.auth();
-    let userId = '';
-      
-    auth.createUserWithEmailAndPassword(email, password)
-    .then( (record) => {
-      userId = record.user.uid;
-    })
-    .catch( error => {
-      response.status(404).json({ 
-        error: error.message,
-      })
-      console.error(error.message);
-      response.end();
-    });
-    if(!userId) return userId;
-    return false;
+      try {
+        record = await auth.createUserWithEmailAndPassword(email, password);
+        status = await this.createUser(record.user.uid, email, name, response);
+        response.status(200).json({
+          message: 'Create with successufuly'
+        })
+      }
+      catch(error){
+        response.status(404).json({ 
+          error: error.message,
+        })
+      }
   },
 
   async createUser(userId, email, name, response){
       
-      if(!userId){
+      if(userId !== false){
         const referencePath = `/users/${userId}`;
         const userReference = firebase.database().ref(referencePath);
         let userStatus = [];
@@ -39,11 +34,9 @@ module.exports = {
         },
         (error) => {
           if(error) {
-            // response.status(404).send({ error: `Data could not be saved. ${error}` });
             userStatus = [ 404, { error: `Data could not be saved. ${error}` }];
             return userStatus;
           }else{
-            // response.status(200).send({ message: 'Data saved successfully.' });
             userStatus = [ 200, { message: 'Data saved successfully.' }];
             
             return userStatus;
@@ -51,8 +44,6 @@ module.exports = {
         });
         return userStatus;
       }
-    
-      return false;
       
   },
 
@@ -60,7 +51,24 @@ module.exports = {
     if(password !== passwordConfirmation)
     { 
       response.status(404).json({ error: 'Password and Password Confirmation is different.' });
-      response.end();
     }
+  },
+
+  async editCurrentUser(){
+    const userId = firebase.auth().onAuthStateChanged( (user) => {
+      if(user){
+        console.log('user.uid',user.uid);
+      }else{
+        console.log('You dont logged')
+      }
+    })
+    // console.log('userId', userId);
+    // const referencePath = `/users/${userId}`;
+    // const userReference = firebase.database().ref(referencePath);
   }
+  // ,
+
+  // async destroyCurrentUser(){
+
+  // }
 }

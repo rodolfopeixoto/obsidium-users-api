@@ -21,11 +21,25 @@ module.exports = {
     const { email, password, passwordConfirmation, name  } = request.body;
     
     userStatus = UserService.call(email, password, passwordConfirmation, name, response);
+    if(userStatus){
+      userStatus.then((result) => {
+        console.log('userStatus', !!result);
+        if(result !== false && result !== undefined) response.status(result[0]).json(result[1])
+      }).catch((error) => {
+        console.error('Error: ', error);
+      });
+    }
     
-    userStatus.then((result) => {
-      if(result !== false) response.status(result[0]).json(result[1])
-    }).catch((error) => {
-      console.error('Error: ', error);
-    });
+  },
+
+  async edit(request, response){
+    const { name, email, photoURL } = request.body;
+    
+    UserService.editCurrentUser();
+
+  },
+
+  async destroy(request, response){
+    
   }
 }
