@@ -18,16 +18,21 @@ module.exports = {
   },
 
   async signUp(request, response){
-    const { email, password, passwordConfirmation, name  } = request.body;
-    
-    userStatus = UserService.call(email, password, passwordConfirmation, name, response);
-    if(userStatus){
-      userStatus.then((result) => {
-        console.log('userStatus', !!result);
-        if(result !== false && result !== undefined) response.status(result[0]).json(result[1])
-      }).catch((error) => {
-        console.error('Error: ', error);
-      });
+    try {
+      const { email, password  } = request.body;
+      const auth = firebase.auth();
+        auth.createUserWithEmailAndPassword(email, password)
+          .then( (record) => {
+            console.log('Record', record)
+            const { user } = record;
+            console.log('user', user)
+            const { uid } = user;
+            return response.status(201).send({uid});
+          }).catch( (error) => {
+            return handleError(response, error);
+          })
+    }catch(error) {
+      return handleError(response, error)
     }
     
   },
@@ -42,4 +47,11 @@ module.exports = {
   async destroy(request, response){
     
   }
+}
+
+
+function handleError(response, error) {
+  console.log('Eita',error.code)
+  console.log('Eita',error.message)
+  return response.status(404).send({ code: error.code, message: error.message });
 }
