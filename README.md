@@ -9,3 +9,9 @@ Requisitos
 #### Docker com todos os microserviços
 
 [https://github.com/rodolfopeixoto/obsidium-docker-compose-nodejs](https://github.com/rodolfopeixoto/obsidium-docker-compose-nodejs)
+
+Efetuar os testes
+
+```
+http://localhost:3003/users
+```
